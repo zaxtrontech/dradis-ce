@@ -2,31 +2,12 @@ services:
   web:
     image: dradis/dradis-ce:latest
     expose:
-      - "3000"  # This routes internally within Dokploy without hitting host port conflicts
+      - "80"
     environment:
       - RAILS_ENV=production
       - SECRET_KEY_BASE=7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d
-      - DATABASE_URL=postgresql://dradis_user:dradis_secure_pass@db:5432/dradis_prod
     volumes:
-      - dradis_data:/dradis/data
-    depends_on:
-      db:
-        condition: service_healthy
-
-  db:
-    image: postgres:13-alpine
-    environment:
-      - POSTGRES_USER=zaxtronadmin
-      - POSTGRES_PASSWORD=cYNo3sAcyqJea0AxBP6A
-      - POSTGRES_DB=zaxtron_dradis
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U dradis_user -d dradis_prod"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      - dradis_data:/dbdata
 
 volumes:
   dradis_data:
-  db_data:

@@ -1,11 +1,11 @@
 services:
   web:
     image: dradis/dradis-ce:latest
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"  # This routes internally within Dokploy without hitting host port conflicts
     environment:
       - RAILS_ENV=production
-      - SECRET_KEY_BASE=7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d  # Change this to a random 64-character hex string
+      - SECRET_KEY_BASE=7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d
       - DATABASE_URL=postgresql://dradis_user:dradis_secure_pass@db:5432/dradis_prod
     volumes:
       - dradis_data:/dradis/data

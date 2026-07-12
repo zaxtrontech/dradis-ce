@@ -1,12 +1,32 @@
-version: '3'
 services:
   web:
     image: dradis/dradis-ce:latest
     ports:
       - "3000:3000"
-    depends_on:
-      - db
-  db:
-    image: postgres:13
     environment:
-      POSTGRES_PASSWORD: cYNo3sAcyqJea0AxBP6A
+      - RAILS_ENV=production
+      - SECRET_KEY_BASE=7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d  # Change this to a random 64-character hex string
+      - DATABASE_URL=postgresql://dradis_user:dradis_secure_pass@db:5432/dradis_prod
+    volumes:
+      - dradis_data:/dradis/data
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_USER=zaxtronadmin
+      - POSTGRES_PASSWORD=cYNo3sAcyqJea0AxBP6A
+      - POSTGRES_DB=zaxtron_dradis
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dradis_user -d dradis_prod"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  dradis_data:
+  db_data:
